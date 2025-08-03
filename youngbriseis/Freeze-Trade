@@ -1,6 +1,6 @@
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
+local UserInputService = game:GetService("User InputService")
 local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
@@ -13,278 +13,264 @@ screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 screenGui.Parent = CoreGui
 
 local function make(class, props)
-local inst = Instance.new(class)
-for k,v in pairs(props) do inst[k] = v end
-return inst
+    local inst = Instance.new(class)
+    for k, v in pairs(props) do inst[k] = v end
+    return inst
 end
 
 local function makeHoverButton(button)
-local originalColor = button.BackgroundColor3
-button.MouseEnter:Connect(function()
-button.BackgroundColor3 = originalColor:lerp(Color3.new(1, 1, 1), 0.2)
-end)
-button.MouseLeave:Connect(function()
-button.BackgroundColor3 = originalColor
-end)
+    local originalColor = button.BackgroundColor3
+    button.MouseEnter:Connect(function()
+        button.BackgroundColor3 = originalColor:lerp(Color3.new(1, 1, 1), 0.2)
+    end)
+    button.MouseLeave:Connect(function()
+        button.BackgroundColor3 = originalColor
+    end)
 end
 
 local loadingOverlay = make("Frame", {
-Parent = screenGui,
-Size = UDim2.new(1, 0, 1, 0),
-BackgroundColor3 = Color3.fromRGB(20, 10, 30),
-BackgroundTransparency = 0,
-ZIndex = 9999
+    Parent = screenGui,
+    Size = UDim2.new(1, 0, 1, 0),
+    BackgroundColor3 = Color3.fromRGB(20, 10, 30),
+    BackgroundTransparency = 0,
+    ZIndex = 9999
 })
 
 local loadingText = make("TextLabel", {
-Parent = loadingOverlay,
-Size = UDim2.new(0, 400, 0, 80),
-Position = UDim2.new(0.5, -200, 0.4, 0),
-Text = "",
-Font = Enum.Font.Arcade,
-TextSize = 42,
-TextColor3 = Color3.fromRGB(255, 80, 255),
-BackgroundTransparency = 1
+    Parent = loadingOverlay,
+    Size = UDim2.new(0, 400, 0, 80),
+    Position = UDim2.new(0.5, -200, 0.4, 0),
+    Text = "",
+    Font = Enum.Font.Arcade,
+    TextSize = 42,
+    TextColor3 = Color3.fromRGB(255, 80, 255),
+    BackgroundTransparency = 1
 })
 
 local loadingBar = make("Frame", {
-Parent = loadingOverlay,
-Size = UDim2.new(0, 0, 0, 8),
-Position = UDim2.new(0.1, 0, 0.55, 10),
-BackgroundColor3 = Color3.fromRGB(255, 0, 200)
+    Parent = loadingOverlay,
+    Size = UDim2.new(0, 0, 0, 8),
+    Position = UDim2.new(0.1, 0, 0.55, 10),
+    BackgroundColor3 = Color3.fromRGB(255, 0, 200)
 })
 make("UICorner", {Parent = loadingBar, CornerRadius = UDim.new(0, 4)})
 
 spawn(function()
-local messages = {"LOADING CORE", "BOOTING MODULES", "SCANNING MEMORY", "INITIALIZING", "CONNECTING TO SERVER", "LOADING UI", "FINALIZING..."}
-for i = 1, 30 do
-loadingText.Text = messages[math.random(1, #messages)]
-task.wait(0.5)
-end
+    local messages = {"LOADING CORE", "BOOTING MODULES", "SCANNING MEMORY", "INITIALIZING", "CONNECTING TO SERVER", "LOADING UI", "FINALIZING..."}
+    for i = 1, 30 do
+        loadingText.Text = messages[math.random(1, #messages)]
+        task.wait(0.3) -- Faster text change
+    end
 end)
 
-TweenService:Create(loadingBar, TweenInfo.new(18), {Size = UDim2.new(0.8, 0, 0, 8)}):Play()
-task.wait(19)
+TweenService:Create(loadingBar, TweenInfo.new(25), {Size = UDim2.new(0.8, 0, 0, 8)}):Play() -- Slower loading
+task.wait(26)
 TweenService:Create(loadingOverlay, TweenInfo.new(1), {BackgroundTransparency = 1}):Play()
 TweenService:Create(loadingText, TweenInfo.new(1), {TextTransparency = 1}):Play()
 TweenService:Create(loadingBar, TweenInfo.new(1), {BackgroundTransparency = 1}):Play()
 task.delay(1.2, function() loadingOverlay:Destroy() end)
 
-local function slideIn(frame)
-frame.Position = UDim2.new(0.5, -frame.Size.X.Offset/2, 1, 0)
-frame.Visible = true
-TweenService:Create(frame, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {
-Position = UDim2.new(0.5, -frame.Size.X.Offset/2, 0.5, -frame.Size.Y.Offset/2)
-}):Play()
-end
-
-local function slideOut(frame)
-TweenService:Create(frame, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {
-Position = UDim2.new(0.5, -frame.Size.X.Offset/2, 1, 0)
-}):Play()
-task.delay(0.4, function() frame.Visible = false end)
-end
-
 local mainFrame = make("Frame", {
-Parent = screenGui,
-Size = UDim2.new(0, 420, 0, 420),
-Position = UDim2.new(0.5, -210, 1, 0),
-BackgroundColor3 = Color3.fromRGB(30, 10, 40),
-BackgroundTransparency = 0.15,
-Visible = false,
-Active = true,
-Draggable = true
+    Parent = screenGui,
+    Size = UDim2.new(0, 320, 0, 320), -- Reduced size
+    Position = UDim2.new(0.5, -160, 1, 0),
+    BackgroundColor3 = Color3.fromRGB(30, 10, 40),
+    BackgroundTransparency = 0.15,
+    Visible = false,
+    Active = true,
+    Draggable = true
 })
 make("UICorner", {Parent = mainFrame, CornerRadius = UDim.new(0, 20)})
-make("UIStroke", {Parent = mainFrame, Color = Color3.fromRGB(255, 0, 200), Thickness = 2})
-make("UIStroke", {Parent = mainFrame, Color = Color3.fromRGB(0, 0, 0), Thickness = 3, Transparency = 0.7})
+make("UIStroke", {Parent = mainFrame, Color = Color3.fromRGB(255, 0, 200), Thickness = 2, Transparency = 0.5}) -- Added stroke
+make("UIGradient", {Parent = mainFrame, Color = ColorSequence.new(Color3.fromRGB(255, 0, 200), Color3.fromRGB(0, 0, 0)), Transparency = NumberSequence.new(0.5)}) -- Gradient effect
+make("UIAspectRatioConstraint", {Parent = mainFrame, AspectRatio = 1.0}) -- Aspect ratio constraint
 
 local creditLabel = make("TextLabel", {
-Parent = mainFrame,
-Size = UDim2.new(1, -40, 0, 28),
-Position = UDim2.new(0, 20, 0, 10),
-Text = "MADE BY YOUNGBRISEIS",
-Font = Enum.Font.GothamBold,
-TextSize = 18,
-TextColor3 = Color3.fromRGB(255, 100, 255),
-BackgroundTransparency = 1,
-TextXAlignment = Enum.TextXAlignment.Left
+    Parent = mainFrame,
+    Size = UDim2.new(1, -40, 0, 28),
+    Position = UDim2.new(0, 20, 0, 10),
+    Text = "MADE BY YOUNGBRISEIS",
+    Font = Enum.Font.GothamBold,
+    TextSize = 18,
+    TextColor3 = Color3.fromRGB(255, 100, 255),
+    BackgroundTransparency = 1,
+    TextXAlignment = Enum.TextXAlignment.Center -- Centered credits
 })
 
 make("Frame", {
-Parent = mainFrame,
-Size = UDim2.new(1, -40, 0, 1),
-Position = UDim2.new(0, 20, 0, 40),
-BackgroundColor3 = Color3.fromRGB(255, 100, 255),
-BorderSizePixel = 0
+    Parent = mainFrame,
+    Size = UDim2.new(1, -40, 0, 1),
+    Position = UDim2.new(0, 20, 0, 40),
+    BackgroundColor3 = Color3.fromRGB(255, 100, 255),
+    BorderSizePixel = 0
 })
 
 local toggleButton = make("TextButton", {
-Parent = screenGui,
-Size = UDim2.new(0, 120, 0, 40),
-Position = UDim2.new(0, 20, 0, 80),
-Text = "TOGGLE MENU",
-Font = Enum.Font.GothamBold,
-TextSize = 16,
-TextColor3 = Color3.fromRGB(255, 255, 255),
-BackgroundColor3 = Color3.fromRGB(255, 0, 200),
-AutoButtonColor = false
+    Parent = screenGui,
+    Size = UDim2.new(0, 120, 0, 40),
+    Position = UDim2.new(0, 20, 0, 80),
+    Text = "TOGGLE MENU",
+    Font = Enum.Font.GothamBold,
+    TextSize = 16,
+    TextColor3 = Color3.fromRGB(255, 255, 255),
+    BackgroundColor3 = Color3.fromRGB(255, 0, 200),
+    AutoButtonColor = false
 })
 make("UICorner", {Parent = toggleButton, CornerRadius = UDim.new(0, 8)})
 makeHoverButton(toggleButton)
 
 local isVisible = false
 toggleButton.MouseButton1Click:Connect(function()
-isVisible = not isVisible
-if isVisible then
-slideIn(mainFrame)
-else
-slideOut(mainFrame)
-end
+    isVisible = not isVisible
+    if isVisible then
+        slideIn(mainFrame)
+    else
+        slideOut(mainFrame)
+    end
 end)
 
 local avatar = make("ImageLabel", {
-Parent = mainFrame,
-Size = UDim2.new(0, 80, 0, 80),
-Position = UDim2.new(0, 20, 0, 60),
-BackgroundTransparency = 1,
-Image = "rbxthumb://type=AvatarHeadShot&id=1&w=420&h=420"
+    Parent = mainFrame,
+    Size = UDim2.new(0, 100, 0, 100), -- Slightly bigger avatar
+    Position = UDim2.new(0, 20, 0, 60),
+    BackgroundTransparency = 1,
+    Image = "rbxthumb://type=AvatarHeadShot&id=1&w=420&h=420"
 })
 make("UICorner", {Parent = avatar, CornerRadius = UDim.new(1, 0)})
 make("UIStroke", {Parent = avatar, Color = Color3.fromRGB(255, 80, 255), Thickness = 2})
 
 local accountAge = make("TextLabel", {
-Parent = mainFrame,
-Size = UDim2.new(0, 280, 0, 20),
-Position = UDim2.new(0, 120, 0, 80),
-BackgroundTransparency = 1,
-Text = "Account Age: -",
-Font = Enum.Font.Code,
-TextColor3 = Color3.fromRGB(255, 160, 255),
-TextSize = 14,
-TextXAlignment = Enum.TextXAlignment.Left
+    Parent = mainFrame,
+    Size = UDim2.new(0, 280, 0, 20),
+    Position = UDim2.new(0, 120, 0, 80),
+    BackgroundTransparency = 1,
+    Text = "Account Age: -",
+    Font = Enum.Font.Code,
+    TextColor3 = Color3.fromRGB(255, 160, 255),
+    TextSize = 14,
+    TextXAlignment = Enum.TextXAlignment.Left
 })
 
 local usernameBox = make("TextBox", {
-Parent = mainFrame,
-Size = UDim2.new(0, 200, 0, 36),
-Position = UDim2.new(0, 120, 0, 110),
-Text = "Target Username",
-Font = Enum.Font.Gotham,
-TextSize = 16,
-TextColor3 = Color3.fromRGB(255, 255, 255),
-BackgroundColor3 = Color3.fromRGB(60, 20, 80),
-ClearTextOnFocus = true
+    Parent = mainFrame,
+    Size = UDim2.new(0, 200, 0, 36),
+    Position = UDim2.new(0, 120, 0, 110),
+    Text = "Target Username",
+    Font = Enum.Font.Gotham,
+    TextSize = 16,
+    TextColor3 = Color3.fromRGB(255, 255, 255),
+    BackgroundColor3 = Color3.fromRGB(60, 20, 80),
+    ClearTextOnFocus = true
 })
 make("UICorner", {Parent = usernameBox, CornerRadius = UDim.new(0, 6)})
 
 local goButton = make("TextButton", {
-Parent = mainFrame,
-Size = UDim2.new(0, 60, 0, 36),
-Position = UDim2.new(0, 330, 0, 110),
-Text = "GO",
-Font = Enum.Font.GothamBold,
-TextSize = 16,
-TextColor3 = Color3.fromRGB(255, 255, 255),
-BackgroundColor3 = Color3.fromRGB(255, 0, 200)
+    Parent = mainFrame,
+    Size = UDim2.new(0, 60, 0, 36),
+    Position = UDim2.new(0, 330, 0, 110),
+    Text = "GO",
+    Font = Enum.Font.GothamBold,
+    TextSize = 16,
+    TextColor3 = Color3.fromRGB(255, 255, 255),
+    BackgroundColor3 = Color3.fromRGB(255, 0, 200)
 })
 make("UICorner", {Parent = goButton, CornerRadius = UDim.new(0, 6)})
 makeHoverButton(goButton)
 
 goButton.MouseButton1Click:Connect(function()
-local name = usernameBox.Text
-local success, uid = pcall(function()
-return Players:GetUserIdFromNameAsync(name)
-end)
-if success then
-avatar.Image = string.format("rbxthumb://type=AvatarHeadShot&id=%d&w=420&h=420", uid)
-local plr = Players:FindFirstChild(name)
-if plr then
-accountAge.Text = "Account Age: " .. plr.AccountAge .. " days"
-else
-accountAge.Text = "Account Age: N/A"
-end
-else
-accountAge.Text = "Invalid Username"
-end
+    local name = usernameBox.Text
+    local success, uid = pcall(function()
+        return Players:GetUser IdFromNameAsync(name)
+    end)
+    if success then
+        avatar.Image = string.format("rbxthumb://type=AvatarHeadShot&id=%d&w=420&h=420", uid)
+        local plr = Players:FindFirstChild(name)
+        if plr then
+            accountAge.Text = "Account Age: " .. plr.AccountAge .. " days"
+        else
+            accountAge.Text = "Account Age: N/A"
+        end
+    else
+        accountAge.Text = "Invalid Username"
+    end
 end)
 
 local function freezeScreen(username)
-local overlay = make("Frame", {
-Parent = screenGui,
-Size = UDim2.new(1, 0, 1, 0),
-BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-BackgroundTransparency = 1,
-ZIndex = 999
-})
-local freezeText = make("TextLabel", {
-Parent = overlay,
-Size = UDim2.new(1, 0, 1, 0),
-Text = "FREEZING TARGET'S SCREEN…",
-Font = Enum.Font.GothamBlack,
-TextSize = 46,
-TextColor3 = Color3.fromRGB(255, 100, 90),
-BackgroundTransparency = 1,
-TextTransparency = 1
-})
-TweenService:Create(overlay, TweenInfo.new(0.3), {BackgroundTransparency = 0.2}):Play()
-TweenService:Create(freezeText, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
-task.wait(2.5)
-TweenService:Create(freezeText, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
-TweenService:Create(overlay, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-task.delay(0.3, function() overlay:Destroy() end)
+    local overlay = make("Frame", {
+        Parent = screenGui,
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundTransparency = 1,
+        ZIndex = 999
+    })
+    local freezeText = make("TextLabel", {
+        Parent = overlay,
+        Size = UDim2.new(1, 0, 1, 0),
+        Text = "FREEZING TARGET'S SCREEN…",
+        Font = Enum.Font.GothamBlack,
+        TextSize = 46,
+        TextColor3 = Color3.fromRGB(255, 100, 90),
+        BackgroundTransparency = 1,
+        TextTransparency = 1
+    })
+    TweenService:Create(overlay, TweenInfo.new(0.3), {BackgroundTransparency = 0.2}):Play()
+    TweenService:Create(freezeText, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
+    task.wait(2.5)
+    TweenService:Create(freezeText, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+    TweenService:Create(overlay, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+    task.delay(0.3, function() overlay:Destroy() end)
 end
 
 local dropdownFrame = make("Frame", {
-Parent = mainFrame,
-Size = UDim2.new(0, 270, 0, 120),
-Position = UDim2.new(0, 120, 0, 190),
-BackgroundColor3 = Color3.fromRGB(50, 20, 70),
-Visible = false
+    Parent = mainFrame,
+    Size = UDim2.new(0, 270, 0, 120),
+    Position = UDim2.new(0, 120, 0, 190),
+    BackgroundColor3 = Color3.fromRGB(50, 20, 70),
+    Visible = false
 })
 make("UICorner", {Parent = dropdownFrame, CornerRadius = UDim.new(0, 6)})
 dropdownFrame.ClipsDescendants = true
 
 local dropdownButton = make("TextButton", {
-Parent = mainFrame,
-Size = UDim2.new(0, 200, 0, 36),
-Position = UDim2.new(0, 120, 0, 150),
-Text = "Select Live Player ▼",
-Font = Enum.Font.GothamBold,
-TextSize = 16,
-TextColor3 = Color3.fromRGB(255, 255, 255),
-BackgroundColor3 = Color3.fromRGB(100, 50, 150)
+    Parent = mainFrame,
+    Size = UDim2.new(0, 200, 0, 36),
+    Position = UDim2.new(0, 120, 0, 150),
+    Text = "Select Live Player ▼",
+    Font = Enum.Font.GothamBold,
+    TextSize = 16,
+    TextColor3 = Color3.fromRGB(255, 255, 255),
+    BackgroundColor3 = Color3.fromRGB(100, 50, 150)
 })
 make("UICorner", {Parent = dropdownButton, CornerRadius = UDim.new(0, 6)})
 makeHoverButton(dropdownButton)
 
 dropdownButton.MouseButton1Click:Connect(function()
-dropdownFrame.Visible = not dropdownFrame.Visible
+    dropdownFrame.Visible = not dropdownFrame.Visible
 end)
 
 local function populateDropdown()
-for _, child in ipairs(dropdownFrame:GetChildren()) do
-if child:IsA("TextButton") then child:Destroy() end
-end
-local y = 0
-for _, plr in ipairs(Players:GetPlayers()) do
-local b = make("TextButton", {
-Parent = dropdownFrame,
-Size = UDim2.new(1, 0, 0, 24),
-Position = UDim2.new(0, 0, 0, y),
-Text = plr.Name,
-Font = Enum.Font.Gotham,
-TextSize = 14,
-TextColor3 = Color3.fromRGB(255, 255, 255),
-BackgroundColor3 = Color3.fromRGB(70, 30, 100)
-})
-makeHoverButton(b)
-b.MouseButton1Click:Connect(function()
-usernameBox.Text = plr.Name
-dropdownFrame.Visible = false
-end)
-y = y + 24
-end
+    for _, child in ipairs(dropdownFrame:GetChildren()) do
+        if child:IsA("TextButton") then child:Destroy() end
+    end
+    local y = 0
+    for _, plr in ipairs(Players:GetPlayers()) do
+        local b = make("TextButton", {
+            Parent = dropdownFrame,
+            Size = UDim2.new(1, 0, 0, 24),
+            Position = UDim2.new(0, 0, 0, y),
+            Text = plr.Name,
+            Font = Enum.Font.Gotham,
+            TextSize = 14,
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            BackgroundColor3 = Color3.fromRGB(70, 30, 100)
+        })
+        makeHoverButton(b)
+        b.MouseButton1Click:Connect(function()
+            usernameBox.Text = plr.Name
+            dropdownFrame.Visible = false
+        end)
+        y = y + 24
+    end
 end
 
 Players.PlayerAdded:Connect(populateDropdown)
@@ -292,96 +278,96 @@ Players.PlayerRemoving:Connect(populateDropdown)
 populateDropdown()
 
 local logsFrame = make("Frame", {
-Parent = screenGui,
-Size = UDim2.new(0, 280, 0, 240),
-Position = UDim2.new(0, -280, 0.5, -120),
-BackgroundColor3 = Color3.fromRGB(60, 30, 80),
-BackgroundTransparency = 0.1,
-Visible = false,
-Active = true,
-Draggable = true
+    Parent = screenGui,
+    Size = UDim2.new(0, 280, 0, 240),
+    Position = UDim2.new(0, -280, 0.5, -120),
+    BackgroundColor3 = Color3.fromRGB(60, 30, 80),
+    BackgroundTransparency = 0.1,
+    Visible = false,
+    Active = true,
+    Draggable = true
 })
 make("UICorner", {Parent = logsFrame, CornerRadius = UDim.new(0, 12)})
 make("UIStroke", {Parent = logsFrame, Color = Color3.fromRGB(255, 0, 200)})
 make("UIStroke", {Parent = logsFrame, Color = Color3.fromRGB(0, 0, 0), Thickness = 3, Transparency = 0.7})
 
 local scroll = make("ScrollingFrame", {
-Parent = logsFrame,
-Size = UDim2.new(1, -10, 1, -45),
-Position = UDim2.new(0, 5, 0, 5),
-CanvasSize = UDim2.new(0, 0, 0, 800),
-ScrollBarThickness = 6,
-BackgroundTransparency = 1
+    Parent = logsFrame,
+    Size = UDim2.new(1, -10, 1, -45),
+    Position = UDim2.new(0, 5, 0, 5),
+    CanvasSize = UDim2.new(0, 0, 0, 800),
+    ScrollBarThickness = 6,
+    BackgroundTransparency = 1
 })
 
 local logs = make("TextLabel", {
-Parent = scroll,
-Size = UDim2.new(1, 0, 0, 800),
-TextXAlignment = Enum.TextXAlignment.Left,
-TextYAlignment = Enum.TextYAlignment.Top,
-Text = "[LOG INIT]\n",
-TextColor3 = Color3.fromRGB(255, 180, 255),
-Font = Enum.Font.Code,
-TextSize = 14,
-BackgroundTransparency = 1
+    Parent = scroll,
+    Size = UDim2.new(1, 0, 0, 800),
+    TextXAlignment = Enum.TextXAlignment.Left,
+    TextYAlignment = Enum.TextYAlignment.Top,
+    Text = "[LOG INIT]\n",
+    TextColor3 = Color3.fromRGB(255, 180, 255),
+    Font = Enum.Font.Code,
+    TextSize = 14,
+    BackgroundTransparency = 1
 })
 
 local analytics = make("TextLabel", {
-Parent = logsFrame,
-Size = UDim2.new(1, -10, 0, 28),
-Position = UDim2.new(0, 5, 1, -32),
-BackgroundTransparency = 1,
-Text = "FPS: 0 | PING: ~0ms | RAM: --",
-Font = Enum.Font.Code,
-TextSize = 14,
-TextColor3 = Color3.fromRGB(255, 120, 255),
-TextXAlignment = Enum.TextXAlignment.Left
+    Parent = logsFrame,
+    Size = UDim2.new(1, -10, 0, 28),
+    Position = UDim2.new(0, 5, 1, -32),
+    BackgroundTransparency = 1,
+    Text = "FPS: 0 | PING: ~0ms | RAM: --",
+    Font = Enum.Font.Code,
+    TextSize = 14,
+    TextColor3 = Color3.fromRGB(255, 120, 255),
+    TextXAlignment = Enum.TextXAlignment.Left
 })
 
 local fpsCounter, lastTime, frames = 0, os.clock(), 0
 RunService.RenderStepped:Connect(function()
-frames += 1
-if os.clock() - lastTime >= 1 then
-fpsCounter = frames
-frames = 0
-lastTime = os.clock()
-local ping = math.random(30, 90)
-local ram = math.random(400, 900) .. "MB"
-analytics.Text = string.format("FPS: %d | PING: ~%dms | RAM: %s", fpsCounter, ping, ram)
-end
+    frames += 1
+    if os.clock() - lastTime >= 1 then
+        fpsCounter = frames
+        frames = 0
+        lastTime = os.clock()
+        local ping = math.random(30, 90)
+        local ram = math.random(400, 900) .. "MB"
+        analytics.Text = string.format("FPS: %d | PING: ~%dms | RAM: %s", fpsCounter, ping, ram)
+    end
 end)
 
 local function makeBtn(txt, y, color, callback)
-local b = Instance.new("TextButton", mainFrame)
-b.Size = UDim2.new(0, 270, 0, 36)
-b.Position = UDim2.new(0, 120, 0, y)
-b.Text = string.upper(txt)
-b.Font = Enum.Font.GothamBold
-b.TextSize = 16
-b.TextColor3 = Color3.fromRGB(255, 255, 255)
-b.BackgroundColor3 = color
-make("UICorner", {Parent = b, CornerRadius = UDim.new(0, 6)})
-makeHoverButton(b)
-if callback then b.MouseButton1Click:Connect(callback) end
-return b
+    local b = Instance.new("TextButton", mainFrame)
+    b.Size = UDim2.new(0, 270, 0, 36)
+    b.Position = UDim2.new(0, 25, 0, y) -- Centered buttons
+    b.Text = string.upper(txt)
+    b.Font = Enum.Font.GothamBold
+    b.TextSize = 16
+    b.TextColor3 = Color3.fromRGB(255, 255, 255)
+    b.BackgroundColor3 = color
+    make("UICorner", {Parent = b, CornerRadius = UDim.new(0, 6)})
+    makeHoverButton(b)
+    if callback then b.MouseButton1Click:Connect(callback) end
+    return b
 end
 
 makeBtn("Force Accept", 280, Color3.fromRGB(255, 80, 0), function()
-logs.Text = logs.Text .. "[" .. os.date("%X") .. "] FORCED CONFIRM: " .. usernameBox.Text .. "\n"
+    logs.Text = logs.Text .. "[" .. os.date("%X") .. "] FORCED CONFIRM: " .. usernameBox.Text .. "\n"
 end)
 
 makeBtn("Freeze Screen", 320, Color3.fromRGB(255, 0, 120), function()
-logs.Text = logs.Text .. "[" .. os.date("%X") .. "] SCREEN FROZEN: " .. usernameBox.Text .. "\n"
-freezeScreen(usernameBox.Text)
+    logs.Text = logs.Text .. "[" .. os.date("%X") .. "] SCREEN FROZEN: " .. usernameBox.Text .. "\n"
+    freezeScreen(usernameBox.Text)
 end)
 
 makeBtn("Open Tools", 360, Color3.fromRGB(180, 50, 255), function()
-logsFrame.Visible = not logsFrame.Visible
-if logsFrame.Visible then
-slideIn(logsFrame)
-else
-slideOut(logsFrame)
-end
+    logsFrame.Visible = not logsFrame.Visible
+    if logsFrame.Visible then
+        slideIn(logsFrame)
+    else
+        slideOut(logsFrame)
+    end
 end)
 
 print("Freeze Trade UI Final v7.0 — Fully Loaded")
