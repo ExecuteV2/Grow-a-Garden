@@ -1,3 +1,4 @@
+```
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("User InputService")
@@ -371,3 +372,4 @@ makeBtn("Open Tools", 360, Color3.fromRGB(180, 50, 255), function()
 end)
 
 print("Freeze Trade UI Final v7.0 — Fully Loaded")
+```
