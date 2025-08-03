@@ -1,6 +1,3 @@
--- Freeze Trade UI: Final v7.0 â€” Akira Blaze Vaporwave Theme, Fully Integrated
-
--- SERVICES
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -199,7 +196,7 @@ local function freezeScreen(username)
     local freezeText = make("TextLabel", {
         Parent = overlay,
         Size = UDim2.new(1, 0, 1, 0),
-        Text = "FREEZING TARGET'S SCREENâ€¦",
+        Text = "FREEZING TARGET'S SCREEN",
         Font = Enum.Font.GothamBlack,
         TextSize = 46,
         TextColor3 = Color3.fromRGB(255, 100, 90),
